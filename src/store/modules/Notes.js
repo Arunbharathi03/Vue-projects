@@ -9,13 +9,13 @@ export default {
         noteItem: {},
         editClip: {},
     },
-
     mutations: {
         INDEX (state, payload) {
             state.list = payload
         },
         INDEX_ITEM (state, payload) {
             state.noteItem = payload 
+            state.editClip = payload
         },
         ADD_NOTE (state, payload) {
             state.list.unshift(payload)
@@ -87,6 +87,12 @@ export default {
                 context.commit('DELETE_NOTE', payload)
             })
             .catch(error => console.log(error))
+        }
+    },
+    getters: {
+        list (state) {
+            const noteList = [...state.list]
+            return noteList
         }
     }
 }

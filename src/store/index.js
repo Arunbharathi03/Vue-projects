@@ -8,7 +8,7 @@ import Employees from './modules/Employees'
 import Notes from './modules/Notes'
 
 const store = new Vuex.Store({
-    strict: true,
+    strict: false,
     modules: {
        Todo,
        Employees,

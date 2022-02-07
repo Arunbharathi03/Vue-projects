@@ -12,7 +12,7 @@
         <div class="flex bg-gray-100 py-8 shadow-md mt-4">
             <ul class="c-list">
                 <li v-for="note in noteList" :key="note.uuid" class="mb-3 p-4 w-full bg-white flex justify-between items-center rounded-lg">
-                    <input class="cursor-pointer" type="checkbox" :value="note.completed" @click="local_changeStatus(note)">
+                    <input class="cursor-pointer" type="checkbox" v-model="note.completed" :value="note.completed" true-value="true" false-value="false" @click="local_changeStatus(note)">
                     <p class="text-lg description" @click="NavToView(note.uuid)">{{ note.description }}</p>
                     <div class="flex">
                         <div class="edit pr-4 border-r-2 cursor-pointer hover:text-blue-300" @click="local_edit(note.uuid)">
@@ -49,7 +49,7 @@
 </template>
 
 <script>
-import { mapActions, mapState } from 'vuex'
+import { mapActions, mapGetters, mapState } from 'vuex'
 
 export default {
     data () {
@@ -66,9 +66,11 @@ export default {
             return [...this.notes_list]
         },
         ...mapState('Notes', {
-            notes_list: 'list',
             edit_clip: 'editClip'
         }),
+        ...mapGetters('Notes', {
+            notes_list: 'list'  
+        })
     },
     methods: {
         local_create () {

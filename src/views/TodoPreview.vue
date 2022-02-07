@@ -55,6 +55,7 @@
 
 <script>
 
+
 export default {
 
     data() {
@@ -69,7 +70,9 @@ export default {
     computed: {
         todos() {
         return this.$store.state.Todo.list
-        }
+        },
+    
+
     },
     methods: {
         previewTitle (myTodos, todoId) {
@@ -96,6 +99,7 @@ export default {
         },
         NavToTodos () {
             this.$router.push('/todo')
+            
         },
         editHeading(title) {
             this.editTitle = true
@@ -127,7 +131,7 @@ export default {
             })
             this.$store.dispatch('Todo/updateDescription', [todoItemIndex, this.newDescription]) 
             } 
-        }
+        },
     }
       
 }

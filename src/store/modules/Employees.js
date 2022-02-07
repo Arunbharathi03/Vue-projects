@@ -10,6 +10,7 @@ export default {
         employeeItem: {},
         employeeData: {},
         isSearchMode: false,
+        searchResult: {}
     },
 
     mutations: {
@@ -18,6 +19,7 @@ export default {
         },
         INDEX_EMPLOYEE (state, payload) {
             state.employeeItem = payload
+            state.employeeData = payload
         },
         SHOW_CREATE_POP (state) {
             state.isCreateMode = true
@@ -39,22 +41,15 @@ export default {
             if (index !== -1) Object.assign(state.list[index], payload)
             Object.assign(state.employeeItem, payload)
         },
-        UPDATE_EMPLOYEE_NAME (state, payload) {
-            state.list[ payload.index ].name = payload.updatedName
-        },
-        UPDATE_EMPLOYEE_AGE (state, payload) {
-            state.list[payload.index].age = payload.updatedAge
-        },
-        UPDATE_EMPLOYEE_SALARY (state, payload) {
-            state.list[payload.index].salary = payload.updatedSalary
-        },
-        SEARCH_MODE (state) {
+        SEARCH_MODE (state, payload) {
             state.isSearchMode = true
+            state.searchResult = payload
         },
         NORMAL_MODE (state) {
             state.isSearchMode = false
         },
-        DELETE_EMPLOYEE (state, index) {
+        DELETE_EMPLOYEE (state, id) {
+            const index = state.list.findIndex(employee => employee.uuid === id)
             state.list.splice(index, 1)
         },
     },
@@ -101,19 +96,16 @@ export default {
             })
             .catch(error => console.log(error))
         },
-        updateName ({commit}, payload){
-            commit('UPDATE_EMPLOYEE_NAME', payload)
+        searchIndex ({commit}, payload) {
+            axios.get(`/users/${payload.uuid}`)
+            .then(response => {
+                const data = response.data.data
+                commit('SEARCH_MODE', data)
+            })
+            .catch(error => console.log(error))
+            
         },
-        updateAge ({commit}, payload){
-            commit('UPDATE_EMPLOYEE_AGE', payload)
-        },
-        updateSalary ({commit}, payload){
-            commit('UPDATE_EMPLOYEE_SALARY', payload)
-        },
-        search ({commit}) {
-            commit('SEARCH_MODE')
-        },
-        normalList ({commit}) {
+        normalMode ({commit}) {
             commit('NORMAL_MODE')
         },
         delete ({commit}, payload) {

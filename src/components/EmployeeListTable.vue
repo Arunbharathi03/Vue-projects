@@ -1,27 +1,46 @@
 <template>
     <div>
-        <table class="mx-auto border-solid border-2 border-black">
-            <tr>
-                <th class="w-96 py-2 border-solid border-2 border-black text-red-400 bg-red-100">Name</th>
-                <th class="w-96 py-2 border-solid border-2 border-black text-red-400 bg-red-100">Age</th>
-                <th class="w-96 py-2 border-solid border-2 border-black text-red-400 bg-red-100">Salary (Rs.)</th>
-                <th class="w-96 py-2 border-solid border-2 border-black text-red-400 bg-red-100">Modify</th>
+        <table class="mx-auto">
+            <tr class="border-solid border-b-2 border-gray-200">
+                <th class="w-96 py-2 text-red-600 bg-red-100">Name</th>
+                <th class="w-96 py-2 text-red-600 bg-red-100">Age</th>
+                <th class="w-96 py-2 text-red-600 bg-red-100">Salary (Rs.)</th>
+                <th class="w-96 py-2 text-red-600 bg-red-100">Modify</th>
             </tr>
-            <tr v-for="employee in employeeList" :key="employee.uuid">
-                <td class="w-96 py-2 border-solid border-2 border-black text-center text-blue-600 font-bold"><router-link :to="{ name: 'employeePreview', params: { itemId: employee.uuid }}">{{ employee.name }}</router-link></td>
-                <td class="w-96 py-2 border-solid border-2 border-black text-center">{{ employee.age }}</td>
-                <td class="w-96 py-2 border-solid border-2 border-black text-center">{{ employee.salary }}</td>
-                <td class="w-96 py-2 border-solid border-2 border-black text-center">
-                    <div class="flex justify-around">
-                        <div class="edit cursor-pointer text-blue-700" @click="local_editEmployee(employee)">
-                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round"  d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg>
+            <template v-if="is_search_mode">
+                <tr class="border-solid border-b-2 border-gray-200 hover:bg-gray-200 hover: duration-200" @click="local_preview(search_result.uuid)">
+                    <td class="w-96 py-6 text-center text-zinc-500 font-bold tracking-wider">{{ search_result.name }}</td>
+                    <td class="w-96 py-6 text-center text-zinc-500 font-bold tracking-widest">{{ search_result.age }}</td>
+                    <td class="w-96 py-6 text-center text-zinc-500 font-bold tracking-widest">{{ search_result.salary }}</td>
+                    <td class="w-96 py-6 text-center text-zinc-500 font-bold tracking-widest">
+                        <div class="flex justify-around">
+                            <div class="edit cursor-pointer text-blue-700" @click.stop="local_editEmployee(search_result)" title="edit">
+                                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round"  d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg>
+                            </div>
+                            <div class="delete cursor-pointer text-red-600" @click.stop="local_deleteEmployee(search_result.uuid, search_result.name)" title="delete">
+                                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
+                            </div>    
                         </div>
-                        <div class="delete cursor-pointer text-red-600" @click="local_deleteEmployee(employee.uuid, employee.name)">
-                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
-                        </div>    
-                    </div>
-                </td>
-            </tr>
+                    </td>
+                </tr>
+            </template>
+            <template v-else>
+                <tr v-for="employee in employeeList" :key="employee.uuid" class="border-solid border-b-2 border-gray-200 hover:bg-gray-200 hover: duration-200" @click="local_preview(employee.uuid)">
+                    <td class="w-96 py-6 text-center text-zinc-500 font-bold tracking-wider">{{ employee.name }}</td>
+                    <td class="w-96 py-6 text-center text-zinc-500 font-bold tracking-widest">{{ employee.age }}</td>
+                    <td class="w-96 py-6 text-center text-zinc-500 font-bold tracking-widest">{{ employee.salary }}</td>
+                    <td class="w-96 py-6 text-center text-zinc-500 font-bold tracking-widest">
+                        <div class="flex justify-around">
+                            <div class="edit cursor-pointer text-blue-700" @click.stop="local_editEmployee(employee)" title="edit">
+                                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round"  d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg>
+                            </div>
+                            <div class="delete cursor-pointer text-red-600" @click.stop="local_deleteEmployee(employee.uuid, employee.name)" title="delete">
+                                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
+                            </div>    
+                        </div>
+                    </td>
+                </tr>
+            </template>
         </table>
         <div class="c-employee-edit" v-if="editMode">
             <div class="flex flex-col items-center relative">
@@ -71,6 +90,8 @@ export default {
         ...mapState('Employees', {
             isEditMode: 'isEditMode',
             employee_data: 'employeeData',
+            search_result: 'searchResult',
+            is_search_mode: 'isSearchMode',
         }),
     },
     methods: {
@@ -106,6 +127,9 @@ export default {
         local_deleteEmployee (itemId, name) {
             const confirmDelete = confirm(`Delete ${name}`)
             if(confirmDelete) this.delete_employee(itemId)
+        },
+        local_preview (employeeId) {
+            this.$router.push({ name: 'employeePreview', params: { itemId: employeeId }})
         },
 
         ...mapActions('Employees', {
